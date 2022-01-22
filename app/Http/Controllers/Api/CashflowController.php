@@ -24,6 +24,9 @@ class CashflowController extends Controller
                 $query->whereDate('date', $request->date);
             });
         })
+            ->when($request->filled('deduction'), function ($query) use ($request) {
+                $query->where('amount', $request->deduction ? '<' : '>', 0);
+            })
             ->get();
     }
 
@@ -37,6 +40,7 @@ class CashflowController extends Controller
     {
         collect($request->validated()['forms'])->each(function ($form) use ($request) {
             $form['date'] = $request->validated()['date'];
+            $form['user_id'] = auth()->id();
             Cashflow::create($form);
         });
 
@@ -74,6 +78,6 @@ class CashflowController extends Controller
      */
     public function destroy($id)
     {
-        //
+        return Cashflow::findOrFail($id)->delete();
     }
 }

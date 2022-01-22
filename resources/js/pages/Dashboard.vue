@@ -78,30 +78,34 @@
                 <v-spacer></v-spacer>
               </v-toolbar>
               <v-card-text v-if="selectedEventData">
-                <div
-                  v-for="cashflow in selectedEventData"
-                  :key="cashflow.id"
-                  class="grid grid-cols-2 gap-2"
-                >
-                  <div>
-                    <label>{{ cashflow.description }}</label>
-                  </div>
-                  <div>
-                    <label
-                      ><b>{{ cashflow.amount }}</b></label
-                    >
-                  </div>
-                </div>
-                <div class="grid grid-cols-2 gap-2">
-                  <div>
-                    <label>Total</label>
-                  </div>
-                  <div>
-                    <label
-                      ><b>{{ totalSelectedEventDetails }}</b></label
-                    >
-                  </div>
-                </div>
+                <v-simple-table fixed-header height="500px">
+                  <template v-slot:default>
+                    <thead>
+                      <tr>
+                        <th class="text-left">Description</th>
+                        <th class="text-left">Amount</th>
+                        <th></th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr v-for="item in selectedEventData" :key="item.name">
+                        <td>{{ item.description }}</td>
+                        <td>{{ item.amount }}</td>
+                        <td>
+                          <v-col cols="12" sm="3">
+                            <v-btn
+                              icon
+                              color="error"
+                              @click="handleDeleteCashflow(item)"
+                            >
+                              <v-icon>mdi-delete</v-icon>
+                            </v-btn>
+                          </v-col>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </template>
+                </v-simple-table>
               </v-card-text>
               <v-card-actions>
                 <v-btn text color="secondary" @click="selectedOpen = false">
@@ -176,6 +180,7 @@ export default {
       const response = await this.$axios.get(`/api/cashflows`, {
         params: {
           date: this.selectedEvent.date,
+          deduction: this.selectedEvent.deduction ? 1 : 0,
         },
       });
 
@@ -248,6 +253,33 @@ export default {
     },
     rnd(a, b) {
       return Math.floor((b - a + 1) * Math.random()) + a;
+    },
+    handleDeleteCashflow(cashflow) {
+      console.log(cashflow);
+      this.$swal
+        .fire({
+          title: `Delete Cashflow ${cashflow.description}?`,
+          text: "You won't be able to revert this!",
+          icon: "warning",
+          showCancelButton: true,
+          confirmButtonColor: "#3085d6",
+          cancelButtonColor: "#d33",
+          confirmButtonText: "Yes, delete it!",
+        })
+        .then((result) => {
+          if (result.isConfirmed) {
+            this.$axios
+              .delete(`/api/cashflows/${cashflow.id}`)
+              .then((response) => {
+                this.$swal.fire(
+                  "Deleted!",
+                  `Cashflow ${cashflow.description} has been deleted`,
+                  "success"
+                );
+                this.getCashFlows();
+              });
+          }
+        });
     },
   },
   computed: {

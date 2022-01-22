@@ -24,19 +24,40 @@ class TotalCashflowController extends Controller
 
     public function __invoke(Request $request)
     {
-        return Cashflow::selectRaw('date, SUM(amount) amount')
+        $negative = Cashflow::selectRaw('date, SUM(amount) amount')
             ->groupByRaw('date')
+            ->where('amount', '<', 0)
             ->get()
             ->map(function ($data, $key) {
                 $color = array_rand(self::colors(), 1);
                 return [
                     'color' => $data->amount < -1000 ? 'red' : self::colors()[$color],
-                    'name' => $data->amount,
-                    'start' => Carbon::parse($data->date)->format('Y-m-d H:m'),
-                    'end' => Carbon::parse($data->date)->format('Y-m-d H:m'),
+                    'name' => "Out - " . abs($data->amount),
+                    'start' => Carbon::parse($data->date)->format('Y-m-d'),
+                    'end' => Carbon::parse($data->date)->format('Y-m-d'),
                     'timed' => true,
-                    'date' => $data->date
+                    'date' => $data->date,
+                    'deduction' => true,
                 ];
             });
+
+        $positive = Cashflow::selectRaw('date, SUM(amount) amount')
+            ->groupByRaw('date')
+            ->where('amount', '>', 0)
+            ->get()
+            ->map(function ($data, $key) {
+                $color = array_rand(self::colors(), 1);
+                return [
+                    'color' => $data->amount < -1000 ? 'red' : self::colors()[$color],
+                    'name' => "In - $data->amount",
+                    'start' => Carbon::parse($data->date)->format('Y-m-d'),
+                    'end' => Carbon::parse($data->date)->format('Y-m-d'),
+                    'timed' => true,
+                    'date' => $data->date,
+                    'deduction' => false,
+                ];
+            });
+
+        return $positive->merge($negative);
     }
 }
