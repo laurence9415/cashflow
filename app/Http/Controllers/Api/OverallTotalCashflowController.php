@@ -8,10 +8,15 @@ use Illuminate\Http\Request;
 
 class OverallTotalCashflowController extends Controller
 {
-    public function __invoke()
+    public function __invoke(Request $request)
     {
-        $totalNiGawasKwarta = Cashflow::where('amount', '<', 0)->sum('amount');
-        $totalNiSulodKwarta = Cashflow::where('amount', '>', 0)->sum('amount');
+        $totalNiGawasKwarta = Cashflow::where('amount', '<', 0)
+            ->filterData($request)
+            ->sum('amount');
+
+        $totalNiSulodKwarta = Cashflow::where('amount', '>', 0)
+            ->filterData($request)
+            ->sum('amount');
         return [
             'totalNiGawasKwarta' => $totalNiGawasKwarta,
             'totalNiSulodKwarta' => $totalNiSulodKwarta

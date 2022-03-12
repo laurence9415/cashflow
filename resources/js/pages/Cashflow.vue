@@ -134,6 +134,7 @@ export default {
           this.form = {
             forms: [],
           };
+          this.$emit("update");
         })
         .catch((error) => {
           if (error.response.status === 422)

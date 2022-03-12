@@ -1,17 +1,17 @@
 <template>
   <v-app>
-    <div class="bg-yellow-400">
+    <div class="bg-gray-500">
       <div class="flex justify-center text-black">
         <div class="app-width">
           <div class="flex justify-between items-center h-16">
-            <label class="text-3xl">Cashflows ni Dexter</label>
+            <label class="text-3xl">Cashflow</label>
             <div>
               <router-link
                 v-for="link in links"
                 :key="link.path"
                 :to="link.path"
                 class="m-4"
-                :class="active === link.path ? 'text-white' : ''"
+                :class="active === link.path ? 'text-xl' : ''"
                 @click.native="handleActivePath(link)"
                 >{{ link.title }}</router-link
               >
@@ -40,8 +40,32 @@
     </div>
 
     <div class="flex justify-center">
-      <div class="app-width">
-        <router-view></router-view>
+      <div class="app-width py-4">
+        <v-row>
+          <v-col>
+            <v-card class="mx-auto p-2" outlined>
+              <label class="text-2xl">Overall In</label>
+              <h1>{{ summary.overall_in }}</h1>
+            </v-card>
+          </v-col>
+          <v-col>
+            <v-card class="mx-auto p-2" outlined>
+              <label class="text-2xl">Overall Out</label>
+              <h1>{{ summary.overall_out }}</h1>
+            </v-card>
+          </v-col>
+        </v-row>
+        <v-row>
+          <v-col class="h-80">
+            <GChart
+              class="h-full"
+              type="LineChart"
+              :data="chartData"
+              :options="chartOptions"
+            />
+          </v-col>
+        </v-row>
+        <router-view @update="getData()"></router-view>
       </div>
     </div>
   </v-app>
@@ -60,9 +84,17 @@ export default {
         title: "Cashflow",
       },
     ],
-    active: "Dashboard",
+    active: "/dashboard",
     items: [{ title: "Logout" }],
     initial: "",
+    summary: {},
+    chartData: [],
+    chartOptions: {
+      chart: {
+        title: "",
+        subtitle: "",
+      },
+    },
   }),
   mounted() {
     this.active = this.$route.path;
@@ -71,8 +103,15 @@ export default {
       .map((word) => word[0])
       .filter((letter, key) => key <= 1)
       .join("");
+    this.getData();
   },
   methods: {
+    getData() {
+      this.$axios.get(`/api/cashflows/summary`).then((response) => {
+        this.summary = response.data;
+        this.chartData = response.data.chart_data;
+      });
+    },
     handleActivePath(link) {
       this.active = link.path;
     },

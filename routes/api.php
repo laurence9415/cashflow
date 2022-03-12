@@ -20,8 +20,8 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
 Route::group(['middleware' => 'auth:sanctum'], function () {
     Route::post('logout', [App\Http\Controllers\Auth\AuthenticatedSessionController::class, 'destroy']);
+    Route::get('/cashflows/total-cashflow', App\Http\Controllers\API\TotalCashflowController::class);
+    Route::get('/cashflows/total', App\Http\Controllers\API\OverallTotalCashflowController::class);
+    Route::get('/cashflows/summary', App\Http\Controllers\API\CashflowSummaryController::class);
+    Route::apiResource('cashflows', App\Http\Controllers\Api\CashflowController::class);
 });
-
-Route::get('cashflows/total-cashflow', App\Http\Controllers\API\TotalCashflowController::class);
-Route::get('cashflows/total', App\Http\Controllers\API\OverallTotalCashflowController::class);
-Route::apiResource('cashflows', App\Http\Controllers\Api\CashflowController::class);

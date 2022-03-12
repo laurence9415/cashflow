@@ -4,7 +4,7 @@ namespace App;
 
 class Auth
 {
-    public function auth()
+    public static function auth()
     {
         return auth()->user();
     }

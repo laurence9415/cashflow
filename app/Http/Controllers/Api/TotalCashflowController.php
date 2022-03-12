@@ -27,6 +27,7 @@ class TotalCashflowController extends Controller
         $negative = Cashflow::selectRaw('date, SUM(amount) amount')
             ->groupByRaw('date')
             ->where('amount', '<', 0)
+            ->filterData($request)
             ->get()
             ->map(function ($data, $key) {
                 $color = array_rand(self::colors(), 1);
@@ -44,6 +45,7 @@ class TotalCashflowController extends Controller
         $positive = Cashflow::selectRaw('date, SUM(amount) amount')
             ->groupByRaw('date')
             ->where('amount', '>', 0)
+            ->filterData($request)
             ->get()
             ->map(function ($data, $key) {
                 $color = array_rand(self::colors(), 1);
@@ -58,6 +60,6 @@ class TotalCashflowController extends Controller
                 ];
             });
 
-        return $positive->merge($negative);
+        return $positive->concat($negative);
     }
 }

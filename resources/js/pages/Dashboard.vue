@@ -1,49 +1,21 @@
 <template>
-  <div>
+  <div class="my-2">
     <v-row class="fill-height">
       <v-col>
         <v-sheet height="64">
           <v-toolbar flat>
-            <v-btn
-              outlined
-              class="mr-4"
-              color="grey darken-2"
-              @click="setToday"
-            >
-              Today
-            </v-btn>
             <v-btn fab text small color="grey darken-2" @click="prev">
               <v-icon small> mdi-chevron-left </v-icon>
-            </v-btn>
-            <v-btn fab text small color="grey darken-2" @click="next">
-              <v-icon small> mdi-chevron-right </v-icon>
             </v-btn>
             <v-toolbar-title v-if="$refs.calendar">
               {{ $refs.calendar.title }}
             </v-toolbar-title>
+            <v-btn fab text small color="grey darken-2" @click="next">
+              <v-icon small> mdi-chevron-right </v-icon>
+            </v-btn>
+
             <v-spacer></v-spacer>
-            <v-menu bottom right>
-              <template v-slot:activator="{ on, attrs }">
-                <v-btn outlined color="grey darken-2" v-bind="attrs" v-on="on">
-                  <span>{{ typeToLabel[type] }}</span>
-                  <v-icon right> mdi-menu-down </v-icon>
-                </v-btn>
-              </template>
-              <v-list>
-                <v-list-item @click="type = 'day'">
-                  <v-list-item-title>Day</v-list-item-title>
-                </v-list-item>
-                <v-list-item @click="type = 'week'">
-                  <v-list-item-title>Week</v-list-item-title>
-                </v-list-item>
-                <v-list-item @click="type = 'month'">
-                  <v-list-item-title>Month</v-list-item-title>
-                </v-list-item>
-                <v-list-item @click="type = '4day'">
-                  <v-list-item-title>4 days</v-list-item-title>
-                </v-list-item>
-              </v-list>
-            </v-menu>
+            <v-menu bottom right> </v-menu>
           </v-toolbar>
         </v-sheet>
         <v-sheet height="600">
@@ -55,8 +27,6 @@
             :event-color="getEventColor"
             :type="type"
             @click:event="showEvent"
-            @click:more="viewDay"
-            @click:date="viewDay"
             @change="updateRange"
           ></v-calendar>
           <v-menu
@@ -127,8 +97,11 @@
   </div>
 </template>
 <script>
+import moment from "moment";
+
 export default {
   data: () => ({
+    moment: moment,
     cashflows: [],
     focus: "",
     type: "month",
@@ -168,13 +141,20 @@ export default {
   mounted() {
     this.$refs.calendar.checkChange();
     this.getCashFlows();
-    this.getTotalCashflows();
+    this.getTotalCashflows().then();
   },
   methods: {
     getCashFlows() {
-      this.$axios.get(`/api/cashflows/total-cashflow`).then((response) => {
-        this.cashflows = response.data;
-      });
+      let params = {};
+      if (this.focus) {
+        params.month = moment(this.focus).format("M");
+        params.year = moment(this.focus).format("Y");
+      }
+      this.$axios
+        .get(`/api/cashflows/total-cashflow`, { params })
+        .then((response) => {
+          this.cashflows = response.data;
+        });
     },
     async getCashflowDetails() {
       const response = await this.$axios.get(`/api/cashflows`, {
@@ -188,7 +168,14 @@ export default {
       return response;
     },
     async getTotalCashflows() {
-      const response = await this.$axios.get(`/api/cashflows/total`);
+      let params = {};
+      if (this.focus) {
+        params.month = moment(this.focus).format("M");
+        params.year = moment(this.focus).format("Y");
+      }
+      const response = await this.$axios.get(`/api/cashflows/total`, {
+        params,
+      });
       this.totalNiGawasKwarta = response.data.totalNiGawasKwarta;
       this.totalNiSulodKwarta = response.data.totalNiSulodKwarta;
     },
@@ -199,14 +186,15 @@ export default {
     getEventColor(event) {
       return event.color;
     },
-    setToday() {
-      this.focus = "";
-    },
     prev() {
       this.$refs.calendar.prev();
+      this.getCashFlows();
+      this.getTotalCashflows();
     },
     next() {
       this.$refs.calendar.next();
+      this.getCashFlows();
+      this.getTotalCashflows();
     },
     showEvent({ nativeEvent, event }) {
       const open = () => {
@@ -277,6 +265,7 @@ export default {
                   "success"
                 );
                 this.getCashFlows();
+                this.$emit("update");
               });
           }
         });

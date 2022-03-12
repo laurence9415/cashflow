@@ -21,13 +21,15 @@
         "postcss-import": "^14.0.1",
         "sass": "^1.32.13",
         "sass-loader": "^12.4.0",
-        "tailwindcss": "^3.0.0",
+        "tailwindcss": "^3.0.15",
         "vue-loader": "^15.9.8",
         "vue-template-compiler": "^2.6.14"
     },
     "dependencies": {
         "@mdi/font": "^6.5.95",
+        "moment": "^2.29.1",
         "vue": "^2.6.14",
+        "vue-google-charts": "^0.3.3",
         "vue-router": "^3.5.3",
         "vue-sweetalert2": "^5.0.2",
         "vuetify": "^2.6.2"

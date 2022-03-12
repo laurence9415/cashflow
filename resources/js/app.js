@@ -6,6 +6,8 @@ import axios from 'axios'
 import '@mdi/font/css/materialdesignicons.css'
 import VueSweetalert2 from 'vue-sweetalert2';
 import 'sweetalert2/dist/sweetalert2.min.css';
+import VueGoogleCharts from 'vue-google-charts'
+
 require('./bootstrap');
 
 //prototypes
@@ -14,6 +16,7 @@ Vue.prototype.$auth = window.auth
 
 Vue.use(Vuetify)
 Vue.use(VueSweetalert2);
+Vue.use(VueGoogleCharts)
 
 Vue.component('App', require('./App.vue').default)
 
