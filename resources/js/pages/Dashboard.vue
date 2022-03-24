@@ -1,5 +1,46 @@
 <template>
   <div class="my-2">
+    <v-row>
+      <v-col>
+        <v-card
+          class="mx-auto p-4 flex justify-between text-white"
+          color="#34a8eb"
+          outlined
+        >
+          <v-card-title class="text-white"> Overall In </v-card-title>
+          <!-- <span class="text-2xl"></span> -->
+          <v-card-subtitle
+            ><span class="text-white text-4xl">{{
+              summary.overall_in
+            }}</span></v-card-subtitle
+          >
+        </v-card>
+      </v-col>
+      <v-col>
+        <v-card class="mx-auto p-4 flex" color="#e83a31" outlined>
+          <v-card-title class="text-white"> Overall Out </v-card-title>
+          <!-- <span class="text-2xl"></span> -->
+          <v-card-subtitle
+            ><span class="text-white text-4xl">{{
+              summary.overall_out
+            }}</span></v-card-subtitle
+          >
+        </v-card>
+      </v-col>
+    </v-row>
+    <v-row>
+      <v-col>
+        <v-card :loading="loadingChart" class="h-80">
+          <GChart
+            v-if="!loadingChart"
+            class="h-full"
+            type="LineChart"
+            :data="chartData"
+            :options="chartOptions"
+          />
+        </v-card>
+      </v-col>
+    </v-row>
     <v-row class="fill-height">
       <v-col>
         <v-sheet height="64">
@@ -15,7 +56,25 @@
             </v-btn>
 
             <v-spacer></v-spacer>
-            <v-menu bottom right> </v-menu>
+            <v-menu bottom right>
+              <template v-slot:activator="{ on }">
+                <div>
+                  <label class="mx-2"
+                    >In:
+                    <span
+                      ><b>{{ totalNiSulodKwarta }}</b></span
+                    ></label
+                  >
+                  |
+                  <label class="mx-2"
+                    >Out:
+                    <span
+                      ><b>{{ totalNiGawasKwarta }}</b></span
+                    ></label
+                  >
+                </div>
+              </template>
+            </v-menu>
           </v-toolbar>
         </v-sheet>
         <v-sheet height="600">
@@ -87,13 +146,6 @@
         </v-sheet>
       </v-col>
     </v-row>
-
-    <h1>
-      TOTAL NISULOD NGA KWARTA: <b>{{ totalNiSulodKwarta }}</b>
-    </h1>
-    <h1>
-      TOTAL NI GAWAS NGA KWARTA: <b>{{ totalNiGawasKwarta }}</b>
-    </h1>
   </div>
 </template>
 <script>
@@ -137,13 +189,33 @@ export default {
     ],
     totalNiGawasKwarta: 0,
     totalNiSulodKwarta: 0,
+    summary: {},
+    chartData: [],
+    chartOptions: {
+      chart: {
+        title: "",
+        subtitle: "",
+      },
+    },
+    loadingChart: false,
   }),
   mounted() {
     this.$refs.calendar.checkChange();
     this.getCashFlows();
     this.getTotalCashflows().then();
+    this.getData();
   },
   methods: {
+    getData() {
+      this.loadingChart = true;
+      this.$axios
+        .get(`/api/cashflows/summary`)
+        .then((response) => {
+          this.summary = response.data;
+          this.chartData = response.data.chart_data;
+        })
+        .finally(() => (this.loadingChart = false));
+    },
     getCashFlows() {
       let params = {};
       if (this.focus) {

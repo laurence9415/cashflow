@@ -1,10 +1,10 @@
 <template>
   <v-app>
-    <div class="bg-gray-500">
+    <div class="bg-gray-700">
       <div class="flex justify-center text-black">
         <div class="app-width">
           <div class="flex justify-between items-center h-16">
-            <label class="text-3xl">Cashflow</label>
+            <label class="text-3xl text-gray-300">Cashflow</label>
             <div>
               <router-link
                 v-for="link in links"
@@ -39,32 +39,8 @@
       </div>
     </div>
 
-    <div class="flex justify-center">
+    <div class="flex justify-center bg-gray-200">
       <div class="app-width py-4">
-        <v-row>
-          <v-col>
-            <v-card class="mx-auto p-2" outlined>
-              <label class="text-2xl">Overall In</label>
-              <h1>{{ summary.overall_in }}</h1>
-            </v-card>
-          </v-col>
-          <v-col>
-            <v-card class="mx-auto p-2" outlined>
-              <label class="text-2xl">Overall Out</label>
-              <h1>{{ summary.overall_out }}</h1>
-            </v-card>
-          </v-col>
-        </v-row>
-        <v-row>
-          <v-col class="h-80">
-            <GChart
-              class="h-full"
-              type="LineChart"
-              :data="chartData"
-              :options="chartOptions"
-            />
-          </v-col>
-        </v-row>
         <router-view @update="getData()"></router-view>
       </div>
     </div>
@@ -82,6 +58,10 @@ export default {
       {
         path: "/cashflow",
         title: "Cashflow",
+      },
+      {
+        path: "/businesses",
+        title: "Business",
       },
     ],
     active: "/dashboard",
