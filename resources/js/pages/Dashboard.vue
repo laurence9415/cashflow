@@ -196,6 +196,7 @@ export default {
         title: "",
         subtitle: "",
       },
+      pointSize: 5,
     },
     loadingChart: false,
   }),

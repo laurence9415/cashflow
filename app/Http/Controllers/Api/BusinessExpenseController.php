@@ -20,6 +20,7 @@ class BusinessExpenseController extends Controller
     {
         return $business->expenses()
             ->when($request->filled('date') && $request->date === 'today', fn ($query) => $query->whereDate('created_at', Carbon::today()))
+            ->latest()
             ->get();
     }
 
