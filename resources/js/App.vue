@@ -11,7 +11,7 @@
                 :key="link.path"
                 :to="link.path"
                 class="m-4"
-                :class="active === link.path ? 'text-xl' : ''"
+                :class="active === link.path ? 'text-xl active-link' : ''"
                 @click.native="handleActivePath(link)"
                 >{{ link.title }}</router-link
               >
@@ -106,8 +106,16 @@ export default {
 };
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 .app-width {
   width: 1200px;
+}
+
+a {
+  color: #ccc !important;
+}
+
+.active-link {
+  color: azure !important;
 }
 </style>

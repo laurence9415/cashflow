@@ -14,6 +14,7 @@
           <thead>
             <tr>
               <th class="text-left">Name</th>
+              <th class="text-left">Amount</th>
               <th class="text-left">Created At</th>
               <th></th>
             </tr>
@@ -21,6 +22,7 @@
           <tbody>
             <tr v-for="business in businesses" :key="business.name">
               <td>{{ business.name }}</td>
+              <td>{{ business.expenses_sum_amount }}</td>
               <td>{{ business.created_at }}</td>
               <td>
                 <router-link :to="`/businesses/${business.id}/expenses`"
@@ -33,7 +35,9 @@
       </v-simple-table>
     </div>
 
-    <router-view></router-view>
+    <div class="mt-4">
+      <router-view></router-view>
+    </div>
   </div>
 </template>
 

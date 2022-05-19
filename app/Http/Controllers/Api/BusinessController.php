@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\BusinessRequest;
 use App\Models\Business;
+use App\Models\BusinessExpense;
 use Illuminate\Http\Request;
 
 class BusinessController extends Controller
@@ -16,7 +17,12 @@ class BusinessController extends Controller
      */
     public function index()
     {
-        return Business::all();
+        return Business::withSum(
+            [
+                'expenses' => fn ($query) => $query->where('status', BusinessExpense::STATUS_OUT)
+            ],
+            'amount'
+        )->get();
     }
 
     /**
@@ -29,6 +35,8 @@ class BusinessController extends Controller
     {
         $businessData = $request->validated();
         $businessData['user_id'] = auth()->id();
+
+        $request->input('field')->default('test');
 
         return Business::create($businessData);
     }

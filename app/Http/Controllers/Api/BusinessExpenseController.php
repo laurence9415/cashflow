@@ -35,6 +35,7 @@ class BusinessExpenseController extends Controller
         $businessExpenseData = $request->validated();
         $businessExpenseData['user_id'] = auth()->id();
         $businessExpenseData['business_id'] = $business->id;
+        $businessExpenseData['date'] = now();
 
         return BusinessExpense::create($businessExpenseData);
     }
@@ -68,8 +69,10 @@ class BusinessExpenseController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(Business $business, BusinessExpense $expense)
     {
-        //
+        $test = $expense->delete();
+
+        return response()->noContent();
     }
 }

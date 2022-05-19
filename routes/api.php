@@ -25,6 +25,9 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
     Route::get('/cashflows/summary', App\Http\Controllers\API\CashflowSummaryController::class);
     Route::put('/businesses/{business}/expenses/{businessExpense}/update-is-paid', App\Http\Controllers\API\BusinessExpenseUpdateIsPaidController::class);
     Route::apiResource('/businesses', App\Http\Controllers\Api\BusinessController::class);
-    Route::apiResource('/businesses/{business}/expenses', App\Http\Controllers\API\BusinessExpenseController::class);
     Route::apiResource('cashflows', App\Http\Controllers\Api\CashflowController::class);
+
+    Route::scopeBindings()->group(function () {
+        Route::apiResource('businesses.expenses', App\Http\Controllers\Api\BusinessExpenseController::class);
+    });
 });
