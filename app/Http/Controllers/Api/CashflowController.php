@@ -27,6 +27,8 @@ class CashflowController extends Controller
             ->when($request->filled('deduction'), function ($query) use ($request) {
                 $query->where('amount', $request->deduction ? '<' : '>', 0);
             })
+            ->when($request->filled('month'), fn ($query) => $query->whereMonth('date', $request->month))
+            ->orderBy('date', 'desc')
             ->get();
     }
 

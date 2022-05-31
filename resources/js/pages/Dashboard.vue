@@ -28,19 +28,17 @@
         </v-card>
       </v-col>
     </v-row>
-    <v-row>
-      <v-col>
-        <v-card :loading="loadingChart" class="h-80">
-          <GChart
-            v-if="!loadingChart"
-            class="h-full"
-            type="LineChart"
-            :data="chartData"
-            :options="chartOptions"
-          />
-        </v-card>
-      </v-col>
-    </v-row>
+    <div class="my-4">
+      <v-card :loading="loadingChart" class="h-80">
+        <GChart
+          v-if="!loadingChart"
+          class="h-full"
+          type="LineChart"
+          :data="chartData"
+          :options="chartOptions"
+        />
+      </v-card>
+    </div>
     <v-row class="fill-height">
       <v-col>
         <v-sheet height="64">
@@ -146,6 +144,39 @@
         </v-sheet>
       </v-col>
     </v-row>
+    <v-row>
+      <v-col>
+        <v-data-table
+          :headers="headers"
+          :items="cashflowList"
+          class="elevation-1"
+          :loading="loadingCashflowList"
+          loading-text="Loading Data... Please wait"
+        >
+          <template v-slot:item.amount="{ item }">
+            <v-chip
+              v-if="item.amount >= 0"
+              class="ma-2"
+              text-color="white"
+              color="primary"
+            >
+              {{ item.amount }}
+            </v-chip>
+            <v-chip
+              v-else-if="item.amount <= -500"
+              class="ma-2"
+              text-color="white"
+              color="red"
+            >
+              {{ item.amount }}
+            </v-chip>
+            <v-chip v-else class="ma-2">
+              {{ item.amount }}
+            </v-chip>
+          </template>
+        </v-data-table>
+      </v-col>
+    </v-row>
   </div>
 </template>
 <script>
@@ -199,12 +230,20 @@ export default {
       pointSize: 5,
     },
     loadingChart: false,
+    cashflowList: [],
+    loadingCashflowList: false,
+    headers: [
+      { text: "Description", value: "description" },
+      { text: "Amount", value: "amount" },
+      { text: "Date", value: "date" },
+    ],
   }),
   mounted() {
     this.$refs.calendar.checkChange();
     this.getCashFlows();
     this.getTotalCashflows().then();
     this.getData();
+    this.getCashflowList();
   },
   methods: {
     getData() {
@@ -216,6 +255,17 @@ export default {
           this.chartData = response.data.chart_data;
         })
         .finally(() => (this.loadingChart = false));
+    },
+    getCashflowList() {
+      this.loadingCashflowList;
+      this.$axios
+        .get(`/api/cashflows`, {
+          params: {
+            month: moment().format("M"),
+          },
+        })
+        .then((response) => (this.cashflowList = response.data))
+        .finally(() => (this.loadingCashflowList = false));
     },
     getCashFlows() {
       let params = {};

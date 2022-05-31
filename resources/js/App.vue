@@ -26,7 +26,7 @@
                 <v-list>
                   <v-list-item v-for="(item, index) in items" :key="index">
                     <v-list-item-title
-                      class="cursor-pointer hover:bg-yellow-400 p-2"
+                      class="cursor-pointer hover:bg-blue-400 p-2"
                       @click="handleMenuClick(item)"
                       >{{ item.title }}</v-list-item-title
                     >
