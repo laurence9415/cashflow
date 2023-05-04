@@ -8,25 +8,14 @@
             <v-radio label="In" value="In"></v-radio>
             <v-radio label="Out" value="Out"></v-radio>
           </v-radio-group>
-          <v-textarea
-            solo
-            name="input-7-4"
-            label="Description"
-            v-model="form.description"
-          ></v-textarea>
+          <v-textarea solo name="input-7-4" label="Description" v-model="form.description"></v-textarea>
           <v-text-field label="Amount" v-model="form.amount"></v-text-field>
           <v-btn type="submit" elevation="2">Save</v-btn>
         </form>
       </div>
     </v-card>
-    <v-data-table
-      :headers="headers"
-      :items="expenses"
-      :items-per-page="10"
-      class="elevation-1"
-      :loading="loading"
-      loading-text="Loading Data... Please wait"
-    >
+    <v-data-table :headers="headers" :items="expenses" :items-per-page="10" class="elevation-1" :loading="loading"
+      loading-text="Loading Data... Please wait">
       <template v-slot:item.is_paid="{ item }">
         <v-icon large color="green darken-2" v-if="item.is_paid">
           mdi-thumb-up
@@ -39,38 +28,14 @@
       </template>
 
       <template v-slot:item.actions="{ item }">
-        <v-btn
-          @click="handleUpdateIsPaid(item)"
-          v-if="item.is_paid"
-          class="mx-2"
-          fab
-          dark
-          x-small
-          color="red"
-        >
+        <v-btn @click="handleUpdateIsPaid(item)" v-if="item.is_paid" class="mx-2" fab dark x-small color="red">
           <v-icon dark> mdi-thumb-down </v-icon>
         </v-btn>
-        <v-btn
-          @click="handleUpdateIsPaid(item)"
-          v-else
-          class="mx-2"
-          fab
-          dark
-          x-small
-          color="success"
-        >
+        <v-btn @click="handleUpdateIsPaid(item)" v-else class="mx-2" fab dark x-small color="success">
           <v-icon dark> mdi-thumb-up </v-icon>
         </v-btn>
 
-        <v-btn
-          @click="handleDeleteExpense(item)"
-          class="mx-2"
-          fab
-          dark
-          x-small
-          color="red"
-          :loading="deletingExpense"
-        >
+        <v-btn @click="handleDeleteExpense(item)" class="mx-2" fab dark x-small color="red" :loading="deletingExpense">
           <v-icon dark> mdi-delete </v-icon>
         </v-btn>
       </template>
@@ -80,6 +45,7 @@
 
 <script>
 var moment = require("moment");
+var vis = require("vis-network")
 
 export default {
   props: {
@@ -153,5 +119,4 @@ export default {
 };
 </script>
 
-<style>
-</style>
+<style></style>

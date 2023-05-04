@@ -23,7 +23,7 @@ const router = new VueRouter({
                     props: true
                 }
             ]
-        }
+        },
     ]
 })
 

@@ -24,9 +24,23 @@
                   </v-btn>
                 </template>
                 <v-list>
-                  <v-list-item v-for="(item, index) in items" :key="index">
+                  <v-list-item
+                    v-for="(item, index) in items"
+                    :key="index"
+                    class="hover:bg-gray-300"
+                  >
+                    <v-list-item-title v-if="item.title !== 'Logout'"
+                      ><router-link
+                        :to="item.path"
+                        @click.native="handleActivePath(item)"
+                        ><span class="text-black">{{
+                          item.title
+                        }}</span></router-link
+                      ></v-list-item-title
+                    >
                     <v-list-item-title
-                      class="cursor-pointer hover:bg-blue-400 p-2"
+                      v-else
+                      class="cursor-pointer hover:bg-gray-300 text-black"
                       @click="handleMenuClick(item)"
                       >{{ item.title }}</v-list-item-title
                     >
@@ -65,7 +79,7 @@ export default {
       },
     ],
     active: "/dashboard",
-    items: [{ title: "Logout" }],
+    items: [{ title: "Settings", path: "/settings" }, { title: "Logout" }],
     initial: "",
     summary: {},
     chartData: [],

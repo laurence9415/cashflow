@@ -13,12 +13,13 @@ class CashflowSummaryController extends Controller
     {
 
         $summaries = Cashflow::select(DB::raw("CONCAT(year(date), '-', month(date)) as date,sum(CASE WHEN amount > 0 THEN amount END) as 'in', sum(CASE WHEN amount < 0 THEN amount END) as 'out'"))
+            ->whereYear('created_at', now()->format('Y'))
             ->groupBy(DB::raw("CONCAT(year(date), '-', month(date))"))
             ->orderBy(DB::raw("CONCAT(year(date), '-', month(date))"))
             ->get();
 
-        $overAllOut = $summaries->sum('out');
-        $overAllIn = $summaries->sum('in');
+        $overAllOut = number_format($summaries->sum('out'), 2);
+        $overAllIn = number_format($summaries->sum('in'), 2);
 
         $chartData = [
             ["Date", "In", "Out"]
